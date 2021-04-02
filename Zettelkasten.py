@@ -9,7 +9,7 @@ class Zettelkasten:
         self.zettels = []
 
     @classmethod
-    def from_folder(cls, folder):
+    def from_folder(cls, folder,):
         ZK = Zettelkasten()
         ZK.folder = folder
         for filepath in os.listdir(ZK.folder):
@@ -34,4 +34,16 @@ class Zettelkasten:
                 return z
         raise IndexError("No Zettel with such UID: {0}".format(y))
 
+
+class ZettelkastenMMD(Zettelkasten):
+    @classmethod
+    def from_folder(cls, folder,):
+        ZK = ZettelkastenMMD()
+        ZK.folder = folder
+        for filepath in os.listdir(ZK.folder):
+            if filepath[0] != '.':
+                ZK.zettels.append(
+                        Z.ZettelMMD.from_file(ZK, filepath)
+                        )
+        return ZK
 
