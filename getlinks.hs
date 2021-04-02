@@ -39,6 +39,8 @@ extractLink x | x =~ decRegex :: Bool = map base10 $ getMatches $ getResult decR
 
 getLink :: Inline -> [Int]
 getLink (Str txt) = extractLink $ unpack txt
+getLink (Link _ xs target) = (extractLink $ unpack $ fst target) ++ getLink xs
+getLink (Link _ [] target) = extractLink $ unpack $ fst target
 getLink _ = []
 
 getLinks :: Pandoc -> Text
