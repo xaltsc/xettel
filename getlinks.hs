@@ -9,15 +9,19 @@ import Data.Char(ord)
 import Data.List(nub)
 import Text.Regex.TDFA
 import qualified Data.Text.IO as T
+import System.Environment(getArgs)
 
 mmdOutwardLinks :: Text -> IO Text 
 mmdOutwardLinks txt = runIOorExplode $
     readMarkdown def{ readerExtensions=multimarkdownExtensions } txt
     >>= pure . getLinks
 
+
+
 main :: IO ()
 main = do
-    T.getContents >>= mmdOutwardLinks >>= T.putStrLn
+    getArgs >>= pure.head >>= readFile >>= pure.pack
+    >>= mmdOutwardLinks >>= T.putStr
 
 digit36 :: Char -> Int
 digit36 x | x `elem` ['0'..'9'] = (ord x) - (ord '0')
