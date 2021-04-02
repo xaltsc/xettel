@@ -6,6 +6,7 @@ import Text.Pandoc
 import Numeric
 import Data.Text(Text, unpack, pack, intercalate)
 import Data.Char(ord)
+import Data.List(nub)
 import Text.Regex.TDFA
 import qualified Data.Text.IO as T
 
@@ -39,9 +40,8 @@ extractLink x | x =~ decRegex :: Bool = map base10 $ getMatches $ getResult decR
 
 getLink :: Inline -> [Int]
 getLink (Str txt) = extractLink $ unpack txt
-getLink (Link _ xs target) = (extractLink $ unpack $ fst target) ++ getLink xs
-getLink (Link _ [] target) = extractLink $ unpack $ fst target
+getLink (Link _ xs target) = (extractLink $ unpack $ fst target) ++ (concat $ map getLink xs)
 getLink _ = []
 
 getLinks :: Pandoc -> Text
-getLinks p = intercalate " " $ map (pack.show) $ queryWith getLink p
+getLinks p = intercalate " " $ nub $ map (pack.show) $ queryWith  getLink p
