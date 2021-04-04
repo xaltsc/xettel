@@ -48,11 +48,12 @@ def updatedb(delete):
 
 @cli.command()
 @click.option('-n', '--name', help="name of the Zettel")
-def new(name):
+@click.option('-e', '--editor', envvar='EDITOR', help="editor to write in")
+def new(name, editor):
     uid = datetime.now().strftime('%y%m%d%H%M%S')
     uid = int36(int(uid))
     path = ZK_PATH + '/' + uid + '-' + name + '.mmd'
-    subprocess.run(['vim', path])
+    subprocess.run([editor, path])
     ZK = Zm.ZettelkastenMMD.from_folder(ZK_PATH) 
     Zwriter = ZXw.ZXWriter(ZK_PATH, ZK)
     Zwriter.zk_to_db()
