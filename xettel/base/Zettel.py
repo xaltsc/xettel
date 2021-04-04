@@ -93,7 +93,7 @@ class Zettel:
     def from_xapian(cls, parent, doc, id):
         terms = zxr.dict_from_termlist(doc.termlist())
 
-        uid = terms["uid"]
+        uid = int(terms["uid"][0])
 
         filename = ""
         for f in terms["filename"]:
@@ -124,4 +124,7 @@ class Zettel:
     def set_outbound_links_from_xapian(self):
         if "links" in self.__xapian_terms.keys():
             for link in self.__xapian_terms["links"]:
-               self.outbound_links.append(self.parent[int(link)])
+                try:
+                   self.outbound_links.append(self.parent[int(link)])
+                except IndexError as e:
+                    print(e)

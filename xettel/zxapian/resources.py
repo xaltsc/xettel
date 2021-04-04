@@ -33,7 +33,7 @@ def dict_from_termlist(termlist, ignore=['T']):
         
         attr = tr_attributes_dict[prefix]
         if attr not in retdict.keys():
-            retdict[tr_attributes_dict[prefix]] = [item[i+1:]] 
+            retdict[tr_attributes_dict[prefix]] = [item[max(i,1):]] 
         else:
-            retdict[tr_attributes_dict[prefix]].append(item[i+1:]) 
+            retdict[tr_attributes_dict[prefix]].append(item[max(i,1):]) 
     return retdict
