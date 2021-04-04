@@ -59,14 +59,25 @@ class Zettelkasten:
                 if oldhash != newhash:
                     db.replace_document(u"Q"+UID, zettel.to_xapian(indexer))
                     updated_docs += 1
-                
-                
-                
             except xapian.DocNotFoundError:
                 db.add_document(zettel.to_xapian(indexer))
                 new_docs += 1
         print("{0} new docs, {1} docs updated".format(new_docs,updated_docs))
 
+    @classmethod
+    def from_xapian(cls, db, folder):
+        ZK = Zettelkasten()
+        ZK.folder = folder
+
+        maxID = db.get_lastdocid()
+        for i in range(1, maxID):
+            try:
+                doc = db.get_document(i)
+                ZK.zettels.append(Zettel.from_xapian(ZK, doc))
+            except xapian.DocNotFoundError:
+                pass
+        return ZK
+    
 
 class ZettelkastenMMD(Zettelkasten):
     @classmethod

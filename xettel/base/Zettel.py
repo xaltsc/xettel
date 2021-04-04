@@ -93,6 +93,11 @@ class Zettel:
                 )
         return z
 
+    @classmethod
+    def from_xapian(cls, parent, doc):
+        print(doc.get_data())
+
+
 class ZettelMMD(Zettel):
 
     @classmethod

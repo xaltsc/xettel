@@ -24,11 +24,11 @@ class ZXapianFrontend:
 
     def __init__(self, folder, ZK):
         self.folder = folder
-        #self.db = xapian.Database(self.folder + '/.bokzdb')
+        self.db = xapian.Database(self.folder + '/.xetteldb')
         self.ZK = ZK
 
     def dump_to_db(self):
-        db = xapian.WritableDatabase(self.folder + '/.bokzdb', xapian.DB_CREATE_OR_OPEN)
+        db = xapian.WritableDatabase(self.folder + '/.xetteldb', xapian.DB_CREATE_OR_OPEN)
         indexer = xapian.TermGenerator()
         stemmer = xapian.Stem("english", "french")
         indexer.set_stemmer(stemmer)
