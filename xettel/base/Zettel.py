@@ -128,3 +128,13 @@ class Zettel:
                    self.outbound_links.append(self.parent[int(link)])
                 except IndexError as e:
                     print(e)
+
+    def set_inbound_links_from_xapian(self):
+        """ Result should be equal to inbound links determied with parenth
+        """
+        if "backlinks" in self.__xapian_terms.keys():
+            for link in self.__xapian_terms["backlinks"]:
+                try:
+                    self.inbound_links.append(self.parent[int(link)])
+                except IndexError as e:
+                    print(e)
