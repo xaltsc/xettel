@@ -24,3 +24,10 @@ class ZXReader(ZX):
 
         return retZK
 
+    def search(self, querystring):
+        query = self.qp.parse_query(querystring)
+        self.enq.set_query(query)
+
+        matches = self.enq.get_mset(0, 50)
+        return matches
+

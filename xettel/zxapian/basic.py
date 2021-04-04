@@ -1,4 +1,5 @@
 import xapian
+from xettel.zxapian.resources import attributes_dict
 
 class ZX:
   def __init__(self, folder, db=None):
@@ -9,7 +10,7 @@ class ZX:
       self.enq = xapian.Enquire(self.db)
       self.qp = xapian.QueryParser()
       
-
-      self.qp.add_prefix("uid", "Q")
+      for key in attributes_dict:
+          self.qp.add_prefix(key, attributes_dict[key])
 
 

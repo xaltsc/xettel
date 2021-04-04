@@ -1,5 +1,6 @@
 import xettel.impl.mmd.ZettelkastenMMD as Zm
 import xettel.zxapian.writer as ZXw
+import xettel.zxapian.reader as ZXr
 
 import click
 import toml
@@ -59,8 +60,11 @@ def new(name, editor):
     Zwriter.zk_to_db()
 
 @cli.command()
-def search():
-    pass
+@click.argument('query', nargs=-1, required=True)
+def search(query):
+    reader = ZXr.ZXReader(ZK_PATH)
+    matches = reader.search(" ".join(query))
+    click.echo(len(list(matches)))
 
 @cli.command()
 def show():
