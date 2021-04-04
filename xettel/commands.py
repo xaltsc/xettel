@@ -47,8 +47,8 @@ def updatedb(delete):
 
 
 @cli.command()
-@click.option('-n', '--name', help="name of the Zettel")
 @click.option('-e', '--editor', envvar='EDITOR', help="editor to write in")
+@click.argument('name', required=True)
 def new(name, editor):
     uid = datetime.now().strftime('%y%m%d%H%M%S')
     uid = int36(int(uid))
