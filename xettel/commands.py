@@ -1,9 +1,21 @@
-import impl.mmd.ZettelkastenMMD as Zm
-import zxapian.writer as ZXw
+import xettel.impl.mmd.ZettelkastenMMD as Zm
+import xettel.zxapian.writer as ZXw
 
 import click
 
-@click.command()
+@click.group()
+def cli():
+    pass
+
+#cli.add_command(updatedb)
+#cli.add_command(new)
+#cli.add_command(search)
+#cli.add_command(show)
+#cli.add_command(count)
+#cli.add_command(export)
+
+
+@cli.command()
 @click.option('--dir', default="lol", help="Zettelkasten directory")
 def updatedb(dir):
     ZK_PATH = dir
@@ -14,22 +26,22 @@ def updatedb(dir):
     Zwriter.zk_to_db()
     click.echo("Success!")
 
-@click.command()
+@cli.command()
 def new():
     pass
 
-@click.command()
+@cli.command()
 def search():
     pass
 
-@click.command()
+@cli.command()
 def show():
     pass
 
-@click.command()
+@cli.command()
 def count():
     pass
 
-@click.command()
+@cli.command()
 def export():
     pass

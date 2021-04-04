@@ -1,5 +1,5 @@
 
-import base.Zettel as Z
+import xettel.base.Zettel as Z
 import os
 import xapian
 

@@ -2,7 +2,7 @@
 #import Zettelkasten as ZK
 
 import xapian
-import zxapian.resources as zxr 
+import xettel.zxapian.resources as zxr 
 import hashlib
 
 class Zettel:

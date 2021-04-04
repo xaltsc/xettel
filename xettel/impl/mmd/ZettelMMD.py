@@ -3,7 +3,7 @@ import pymmd.mmd as mmd
 import os
 import subprocess
 
-from base.Zettel import Zettel
+from xettel.base.Zettel import Zettel
 
 class ZettelMMD(Zettel):
 

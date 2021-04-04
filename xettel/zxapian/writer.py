@@ -1,5 +1,5 @@
 import xapian
-from zxapian.basic import ZX
+from xettel.zxapian.basic import ZX
 
 class ZXWriter(ZX):
 

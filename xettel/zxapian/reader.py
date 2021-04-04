@@ -1,7 +1,7 @@
 import xapian
-import base.Zettelkasten as ZK
-import base.Zettel as Z
-from zxapian.basic import ZX
+import xettel.base.Zettelkasten as ZK
+import xettel.base.Zettel as Z
+from xettel.zxapian.basic import ZX
 
 class ZXReader(ZX):
 
