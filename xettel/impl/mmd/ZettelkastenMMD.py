@@ -1,7 +1,7 @@
 
 import os
 from base.Zettelkasten import Zettelkasten
-import ZettelMMD as Z
+import impl.mmd.ZettelMMD as Z
 
 class ZettelkastenMMD(Zettelkasten):
     @classmethod

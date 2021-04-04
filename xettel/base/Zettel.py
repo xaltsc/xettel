@@ -2,15 +2,17 @@
 #import Zettelkasten as ZK
 
 import xapian
-import ZettelXapian as ZX
+import zxapian.resources as zxr 
 import hashlib
 
 class Zettel:
     "A single Zettel"
 
-    def __init__(self, parent, uid, filename):
+    def __init__(self, parent, uid, filename, xid=None, xterms=None):
         self.parent = parent
         self.__uid = uid
+        self.__xapian_id = xid
+        self.__xapian_terms = xterms
         self.filename = filename 
         self.attributes = {}
         self.__hash = ""
@@ -66,7 +68,7 @@ class Zettel:
         document.add_boolean_term("F"+self.filename)
 
         for key in self.attributes.keys():
-            prefix = ZX.attributes_dict[key]
+            prefix = zxr.attributes_dict[key]
             indexer.index_text(self.attributes[key], 1, prefix)
 
         return document
@@ -88,6 +90,38 @@ class Zettel:
         return z
 
     @classmethod
-    def from_xapian(cls, parent, doc):
-        print(doc.get_data())
+    def from_xapian(cls, parent, doc, id):
+        terms = zxr.dict_from_termlist(doc.termlist())
 
+        uid = terms["uid"]
+
+        filename = ""
+        for f in terms["filename"]:
+            if len(f)>len(filename):
+                filename = f
+
+        z = Zettel(
+                parent,
+                uid,
+                filename,
+                xid=id,
+                xterms=terms
+                )
+        return z
+
+    def set_attributes_from_xapian(self):
+        self.__hash = self.__xapian_terms["hash"]
+
+        keys_to_look = list(self.__xapian_terms.keys())
+        ignorekeys=["filename", "hash", "uid", "links", "backlinks"]
+        for key in ignorekeys:
+            if key in keys_to_look:
+                keys_to_look.remove(key)
+        
+        for key in keys_to_look:
+            self.attributes[key] = self.__xapian_terms[key]
+
+    def set_outbound_links_from_xapian(self):
+        if "links" in self.__xapian_terms.keys():
+            for link in self.__xapian_terms["links"]:
+               self.outbound_links.append(self.parent[int(link)])
