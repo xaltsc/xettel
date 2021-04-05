@@ -33,6 +33,10 @@ class Zettel:
 
     def get_uid(self):
         return self.__uid
+ 
+    def get_uid_36(self):
+        return zxr.int36(self.__uid)
+
 
     def create_hash(self, tobehashed):
         h = hashlib.new('sha3_224')
@@ -54,9 +58,11 @@ class Zettel:
 
         for link in self.inbound_links:
             indexer.index_text(link.get_uid_str(), 1, "LI")
+            indexer.index_text(link.get_uid_36(), 1, "LI")
 
         for link in self.outbound_links:
             indexer.index_text(link.get_uid_str(), 1, "LO")
+            indexer.index_text(link.get_uid_36(), 1, "LO")
 
         data = {}
         data["uid"]=self.get_uid_str()
@@ -79,8 +85,10 @@ class Zettel:
 
         indexer.index_text(self.filename, 1, "F")
         indexer.index_text(self.get_uid_str(), 1, "Q")
+        indexer.index_text(self.get_uid_36(), 1, "Q")
         indexer.index_text(self.get_hash(), 1, "H")
         document.add_boolean_term("Q"+self.get_uid_str())
+        document.add_boolean_term("Q"+self.get_uid_36())
         document.add_boolean_term("H"+self.get_hash())
         document.add_boolean_term("F"+self.filename)
 

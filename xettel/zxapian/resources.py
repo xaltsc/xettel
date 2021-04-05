@@ -37,3 +37,14 @@ def dict_from_termlist(termlist, ignore=['T']):
         else:
             retdict[tr_attributes_dict[prefix]].append(item[max(i,1):]) 
     return retdict
+
+def int36(num):
+    digits="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    base36=""
+    if num == 0:
+        return "0"
+    while num != 0:
+        base36 = digits[num % 36] + base36
+        num = num // 36
+    return base36
+

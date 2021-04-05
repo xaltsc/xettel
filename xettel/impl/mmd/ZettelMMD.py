@@ -21,7 +21,7 @@ class ZettelMMD(Zettel):
         fp = os.path.realpath(filepath)
         link_output = subprocess.run([
             '/home/ax/docs/90-projects/92-coding/92.08-xettel/getlinks.hs',
-            fp], stdout=subprocess.PIPE)
+            fp], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
         
         link_list = link_output.stdout.decode('utf-8').split(' ')
         if link_list == ['']:
