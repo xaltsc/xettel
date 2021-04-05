@@ -156,4 +156,7 @@ class Zettel:
                 except IndexError as e:
                     print(e)
     def __hash__(self):
-        return self.__hash
+        if type(self.__hash) == str:
+            return int(self.__hash, base=16)
+        else:
+            return self.__hash

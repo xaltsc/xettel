@@ -59,7 +59,7 @@ class Zettelkasten:
     
     def check_health(self):
         G = nx.DiGraph()
-        G.add_nodes_from(self)
+        G.add_nodes_from(self.zettels)
         for z in self:
             for zo in z.outbound_links:
                 G.add_edge(z, zo)
