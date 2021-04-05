@@ -44,6 +44,8 @@ def updatedb(delete):
     click.echo("Recording changes to the database...")
     Zwriter.zk_to_db()
     click.echo("Success!")
+    if not ZK.check_health():
+        click.echo("Warning: the Zettelkasten is not connected.")
     if delete:
         Zwriter.delete_in_db()
 
@@ -85,7 +87,7 @@ def search(query):
     matches = reader.search(" ".join(query))
     for match in matches:
         fields = j.loads(match.document.get_data())
-        buildshownmatch="{}".format(fields["uid"])
+        buildshownmatch="{}".format(int36(int(fields["uid"])))
         if "tags" in fields:
             buildshownmatch+= " ({})".format(fields["tags"])
         buildshownmatch += " -- {}".format(fields["title"])

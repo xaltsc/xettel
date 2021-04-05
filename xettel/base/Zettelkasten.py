@@ -2,6 +2,7 @@
 import xettel.base.Zettel as Z
 import os
 import xapian
+import networkx as nx
 
 class Zettelkasten:
     "A list of Zettels"
@@ -56,5 +57,13 @@ class Zettelkasten:
                 pass
         return ZK
     
+    def check_health(self):
+        G = nx.DiGraph()
+        G.add_nodes_from(self)
+        for z in self:
+            for zo in z.outbound_links:
+                G.add_edge(z, zo)
+
+        return nx.is_weakly_connected(G)
 
 

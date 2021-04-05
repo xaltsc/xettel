@@ -155,3 +155,5 @@ class Zettel:
                     self.inbound_links.append(self.parent[int(link)])
                 except IndexError as e:
                     print(e)
+    def __hash__(self):
+        return self.__hash
