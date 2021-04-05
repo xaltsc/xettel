@@ -6,6 +6,7 @@ import click
 import toml
 from datetime import datetime
 import subprocess
+import json as j
 
 def cfgparse(configpath):
     return toml.load(configpath)
@@ -60,19 +61,45 @@ def new(name, editor):
     Zwriter.zk_to_db()
 
 @cli.command()
+@click.option('-e', '--editor', envvar='EDITOR', help="editor to write in")
+@click.argument('identifier', required=True)
+def edit(identifier, editor):
+    reader = ZXr.ZXReader(ZK_PATH)
+    matches = reader.search(" ".join(identifier))
+    if len(list(matches)) == 1:
+        doc = list(matches)[0].document
+        path = ZK_PATH + '/' + doc.filename
+        subprocess.run([editor, path])
+        ZK = Zm.ZettelkastenMMD.from_folder(ZK_PATH) 
+        Zwriter = ZXw.ZXWriter(ZK_PATH, ZK)
+        Zwriter.zk_to_db()
+    elif len(list(matches)) == 0: 
+        click.echo("No match for identifier")
+    else:
+        click.echo("This identifier matches too many documents.")
+
+@cli.command()
 @click.argument('query', nargs=-1, required=True)
 def search(query):
     reader = ZXr.ZXReader(ZK_PATH)
     matches = reader.search(" ".join(query))
+    for match in matches:
+        fields = j.loads(match.document.get_data())
+        buildshownmatch="{}".format(fields["uid"])
+        if "tags" in fields:
+            buildshownmatch+= " ({})".format(fields["tags"])
+        buildshownmatch += " -- {}".format(fields["title"])
+        if "abstract" in fields:
+            buildshownmatch+= " : \"{}\"".format(fields["abstract"])
+        click.echo(buildshownmatch)
+
+@cli.command()
+@click.argument('query', nargs=-1, required=True)
+def count(query):
+    reader = ZXr.ZXReader(ZK_PATH)
+    matches = reader.search(" ".join(query))
     click.echo(len(list(matches)))
 
-@cli.command()
-def show():
-    pass
-
-@cli.command()
-def count():
-    pass
 
 @cli.command()
 def export():

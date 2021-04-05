@@ -4,6 +4,7 @@
 import xapian
 import xettel.zxapian.resources as zxr 
 import hashlib
+import json as j
 
 class Zettel:
     "A single Zettel"
@@ -57,8 +58,24 @@ class Zettel:
         for link in self.outbound_links:
             indexer.index_text(link.get_uid_str(), 1, "LO")
 
-        if "text" in self.attributes:
-            document.set_data(self.attributes["text"])
+        data = {}
+        data["uid"]=self.get_uid_str()
+        if "tags" in self.attributes:
+            tagstring=" ".join(map(lambda x: '#'+x, self.attributes["tags"].split(",")))
+            data["tags"]=tagstring
+
+        if "title" in self.attributes:
+            data["title"] = self.attributes["title"]
+        else:
+            tilewithext="-".join(self.filename.split('-')[1:])
+            title= ".".join(tilewithext.split('.')[:-1])
+            data["title"] = title
+
+        if "abstract" in self.attributes:
+            data["abstract"]=self.attributes["abstract"]
+
+
+        document.set_data(j.dumps(data))
 
         indexer.index_text(self.filename, 1, "F")
         indexer.index_text(self.get_uid_str(), 1, "Q")
