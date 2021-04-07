@@ -10,7 +10,7 @@ class ZX:
       self.enq = xapian.Enquire(self.db)
       self.qp = xapian.QueryParser()
       
-      self.qp.add_prefix("", "T")
+     # self.qp.add_prefix("", "T")
       for key in attributes_dict:
           self.qp.add_prefix(key, attributes_dict[key])
 

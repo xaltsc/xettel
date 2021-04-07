@@ -66,6 +66,7 @@ class Zettel:
 
         data = {}
         data["uid"]=self.get_uid_str()
+        data["filename"]=self.filename
         if "tags" in self.attributes:
             tagstring=" ".join(map(lambda x: '#'+x, self.attributes["tags"].split(",")))
             data["tags"]=tagstring

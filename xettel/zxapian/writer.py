@@ -31,7 +31,7 @@ class ZXWriter(ZX):
                 olddoc = self.db.get_document(match[0].docid)
                 oldhash = [ x.term for x in olddoc.termlist() if x.term.startswith(b'H') ][0][1:]
                 if oldhash != newhash:
-                    self.db.replace_document(u"Q"+UID, zettel.to_xapian(indexer))
+                    self.db.replace_document(u"Q"+UID, zettel.to_xapian(self.indexer))
                     updated_docs += 1
             except xapian.DocNotFoundError:
                 self.db.add_document(zettel.to_xapian(self.indexer))

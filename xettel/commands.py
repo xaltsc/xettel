@@ -82,17 +82,21 @@ def edit(identifier, editor):
 
 @cli.command()
 @click.argument('query', nargs=-1, required=True)
-def search(query):
+@click.option('-f', '--filename', default=False, is_flag=True, help="output only filename",)
+def search(query, filename=False):
     reader = ZXr.ZXReader(ZK_PATH)
     matches = reader.search(" ".join(query))
     for match in matches:
         fields = j.loads(match.document.get_data())
-        buildshownmatch="{}".format(int36(int(fields["uid"])))
-        if "tags" in fields:
-            buildshownmatch+= " ({})".format(fields["tags"])
-        buildshownmatch += " -- {}".format(fields["title"])
-        if "abstract" in fields:
-            buildshownmatch+= " : \"{}\"".format(fields["abstract"])
+        if filename:
+            buildshownmatch = fields["filename"]
+        else:
+            buildshownmatch="{}".format(int36(int(fields["uid"])))
+            if "tags" in fields:
+                buildshownmatch+= " ({})".format(fields["tags"])
+            buildshownmatch += " -- {}".format(fields["title"])
+            if "abstract" in fields:
+                buildshownmatch+= " : \"{}\"".format(fields["abstract"])
         click.echo(buildshownmatch)
 
 @cli.command()
