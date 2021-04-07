@@ -9,7 +9,7 @@ Thumbs.db
 *.pyc
 *.pyo
 *.pyd
-
+venv/.
 # C extensions
 *.so
 
