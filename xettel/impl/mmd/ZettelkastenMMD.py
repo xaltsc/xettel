@@ -13,4 +13,5 @@ class ZettelkastenMMD(Zettelkasten):
                 ZK.zettels.append(
                         Z.ZettelMMD.from_file(ZK, filepath)
                         )
+        ZK.initialise_rels()
         return ZK

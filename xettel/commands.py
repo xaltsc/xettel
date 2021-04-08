@@ -1,4 +1,5 @@
 import xettel.impl.mmd.ZettelkastenMMD as Zm
+import xettel.impl.xapian.ZettelkastenX as Zx
 import xettel.zxapian.writer as ZXw
 import xettel.zxapian.reader as ZXr
 
@@ -100,13 +101,13 @@ def search(query, filename=False):
 @cli.command()
 @click.option('-a', '--action', type=click.Choice(['checkhealth', 'unreachables']), default='checkhealth')
 def health(action="checkhealth"):
-    ZK = Zm.ZettelkastenMMD.from_folder(ZK_PATH) # not ideal
+    ZK = ZXr.ZXReader(ZK_PATH).db_to_zk()
     ZK.build_graph()
     if action == "checkhealth":
-        click.echo( "The Zettelkasten is healthy" if ZK.is_healthy else "The Zettelkasten is not healty" )
+        click.echo( "The Zettelkasten is healthy" if ZK.is_healthy() else "The Zettelkasten is not healthy" )
     elif action == "unreachables":
         click.echo("The following files are not reachable from the index.")
-        for filename in ZK.unreachable_zetttels():
+        for filename in ZK.unreachable_zettels():
             click.echo(filename)
 
 @cli.command()

@@ -1,6 +1,5 @@
 import xapian
-import xettel.base.Zettelkasten as ZK
-import xettel.base.Zettel as Z
+import xettel.impl.xapian.ZettelkastenX as ZKX
 from xettel.zxapian.basic import ZX
 
 class ZXReader(ZX):
@@ -11,18 +10,7 @@ class ZXReader(ZX):
         super().__init__(folder, db=self.db)
 
     def db_to_zk(self):
-        retZK = ZK.Zettelkasten()
-        retZK.folder = self.folder
-
-        for i in range(1,self.db.get_lastdocid() + 1):
-            try:
-                doc = self.db.get_document(i)
-                z = Z.Zettel.from_xapian(retZK, doc, i)
-                retZK.zettels.append(z)
-            except xapian.DocNotFoundError:
-                pass
-
-        return retZK
+        return ZKX.ZettelkastenX.from_xapian(self.db, self.folder)
 
     def search(self, querystring):
         query = self.qp.parse_query(querystring, self.qp.FLAG_WILDCARD)

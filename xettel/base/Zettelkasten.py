@@ -25,9 +25,9 @@ class Zettelkasten:
 
     def initialise_rels(self):
         for z in self:
-            z.set_outbound_links_from_file()
+            z.set_pre_all()
         for z in self:
-            z.set_inbound_links()
+            z.set_all()
 
     def indices(self):
         for z in self:
@@ -51,20 +51,8 @@ class Zettelkasten:
     def to_xapian(self):
         return self.__iter__()
         
-    @classmethod
-    def from_xapian(cls, db, folder):
-        ZK = Zettelkasten()
-        ZK.folder = folder
+    # Health checks {{{
 
-        maxID = db.get_lastdocid()
-        for i in range(1, maxID):
-            try:
-                doc = db.get_document(i)
-                ZK.zettels.append(Zettel.from_xapian(ZK, doc))
-            except xapian.DocNotFoundError:
-                pass
-        return ZK
-    
     def build_graph(self):
         self.initialise_rels()
         self.graph = nx.DiGraph()
@@ -86,6 +74,8 @@ class Zettelkasten:
     def display_graph(self):
         nx.draw_networkx_labels(self.graph, pos=nx.spring_layout(self.graph), labels=dict([(z, z.filename) for z in ZK]))
 
+   # }}}
+    
 
 
 
