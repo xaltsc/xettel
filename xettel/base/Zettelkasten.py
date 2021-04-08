@@ -9,6 +9,7 @@ class Zettelkasten:
     def __init__(self):
         self.folder = ""
         self.zettels = []
+        self.graph = None
 
     @classmethod
     def from_folder(cls, folder):
@@ -19,7 +20,14 @@ class Zettelkasten:
                 ZK.zettels.append(
                         Z.Zettel.from_file(ZK, filepath)
                         )
+        ZK.initialise_rels()
         return ZK
+
+    def initialise_rels(self):
+        for z in self:
+            z.set_outbound_links_from_file()
+        for z in self:
+            z.set_inbound_links()
 
     def indices(self):
         for z in self:
@@ -57,13 +65,27 @@ class Zettelkasten:
                 pass
         return ZK
     
-    def check_health(self):
-        G = nx.DiGraph()
-        G.add_nodes_from(self.zettels)
+    def build_graph(self):
+        self.initialise_rels()
+        self.graph = nx.DiGraph()
+        self.graph.add_nodes_from(self.zettels)
         for z in self:
             for zo in z.outbound_links:
-                G.add_edge(z, zo)
+                self.graph.add_edge(z, zo)
 
-        return nx.is_weakly_connected(G)
+    def is_healthy(self):
+        return nx.is_weakly_connected(self.graph)
+
+    def unreachable_zettels(self):
+        source = self[0]
+        components = nx.weakly_connected_components(self.graph)
+        main_comp = [ comp for comp in components if source in comp ][0]
+        fns = [ z.filename for z in self if z not in main_comp ]
+        return fns
+    
+    def display_graph(self):
+        nx.draw_networkx_labels(self.graph, pos=nx.spring_layout(self.graph), labels=dict([(z, z.filename) for z in ZK]))
+
+
 
 

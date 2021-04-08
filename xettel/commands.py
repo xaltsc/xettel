@@ -44,8 +44,6 @@ def updatedb(delete):
     click.echo("Recording changes to the database...")
     Zwriter.zk_to_db()
     click.echo("Success!")
-    if not ZK.check_health():
-        click.echo("Warning: the Zettelkasten is not connected.")
     if delete:
         Zwriter.delete_in_db()
 
@@ -98,6 +96,18 @@ def search(query, filename=False):
             if "abstract" in fields:
                 buildshownmatch+= " : \"{}\"".format(fields["abstract"])
         click.echo(buildshownmatch)
+
+@cli.command()
+@click.option('-a', '--action', type=click.Choice(['checkhealth', 'unreachables']), default='checkhealth')
+def health(action="checkhealth"):
+    ZK = Zm.ZettelkastenMMD.from_folder(ZK_PATH) # not ideal
+    ZK.build_graph()
+    if action == "checkhealth":
+        click.echo( "The Zettelkasten is healthy" if ZK.is_healthy else "The Zettelkasten is not healty" )
+    elif action == "unreachables":
+        click.echo("The following files are not reachable from the index.")
+        for filename in ZK.unreachable_zetttels():
+            click.echo(filename)
 
 @cli.command()
 @click.argument('query', nargs=-1, required=True)
