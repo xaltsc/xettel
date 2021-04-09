@@ -8,6 +8,7 @@ import toml
 from datetime import datetime
 import subprocess
 import json as j
+import os
 
 def cfgparse(configpath):
     return toml.load(configpath)
@@ -82,13 +83,20 @@ def edit(identifier, editor):
 @cli.command()
 @click.argument('query', nargs=-1, required=True)
 @click.option('-f', '--filename', default=False, is_flag=True, help="output only filename",)
-def search(query, filename=False):
+@click.option('-m', '--map', default=False, is_flag=True, help="gives a JSON formatted map UID:Filename")
+def search(query, filename=False, map=False):
     reader = ZXr.ZXReader(ZK_PATH)
     matches = reader.search(" ".join(query))
+    if map:
+        zk = reader.db_to_zk()
+        mapping36 = [(z.get_uid_36(), z.filename) for z in zk]
+        mapping10 = [(z.get_uid_str(), z.filename) for z in zk]
+        mapping = dict(mapping10 + mapping36)
+        click.echo(j.dumps(mapping))
     for match in matches:
         fields = j.loads(match.document.get_data())
         if filename:
-            buildshownmatch = fields["filename"]
+            buildshownmatch = fields["filename"] 
         else:
             buildshownmatch="{}".format(int36(int(fields["uid"])))
             if "tags" in fields:
@@ -120,4 +128,19 @@ def count(query):
 
 @cli.command()
 def export():
-    pass
+    ZK = ZXr.ZXReader(ZK_PATH).db_to_zk()
+    for z in ZK:
+        file = z.filename
+        subprocess.run(["pandoc",
+            "--metadata=uid:{}".format(z.get_uid_str()),
+            "-F", "/home/ax/docs/90-projects/92-coding/92.08-xettel/pandocfilter.py",
+            "-f", "markdown_mmd",
+            "-t", "html",
+            "-o", ZK_PATH + "/export/" + file[:-4]+".html",
+            "--data-dir="+ ZK_PATH + "/export/pandoc/",
+            "--shift-heading-level-by" , "1",
+            "--template", "zettel",
+            ZK_PATH + '/' + file
+            ])
+        print(file)
+

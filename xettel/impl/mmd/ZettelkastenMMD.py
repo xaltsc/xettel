@@ -9,7 +9,7 @@ class ZettelkastenMMD(Zettelkasten):
         ZK = ZettelkastenMMD()
         ZK.folder = folder
         for filepath in os.listdir(ZK.folder):
-            if filepath[0] != '.':
+            if filepath[0] != '.' and filepath not in ["export"]:
                 ZK.zettels.append(
                         Z.ZettelMMD.from_file(ZK, filepath)
                         )
