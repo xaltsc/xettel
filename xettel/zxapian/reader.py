@@ -13,7 +13,8 @@ class ZXReader(ZX):
         return ZKX.ZettelkastenX.from_xapian(self.db, self.folder)
 
     def search(self, querystring):
-        query = self.qp.parse_query(querystring, self.qp.FLAG_WILDCARD)
+        # Do not set wildcard, prevents query fro, being properly parsed
+        query = self.qp.parse_query(querystring)# self.qp.FLAG_WILDCARD)
         self.enq.set_query(query)
 
         matches = self.enq.get_mset(0, 50)

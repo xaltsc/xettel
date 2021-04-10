@@ -73,18 +73,19 @@ def new(name, editor, template=None):
 
 @cli.command()
 @click.option('-e', '--editor', envvar='EDITOR', help="editor to write in")
-@click.argument('identifier', required=True)
+@click.argument('identifier', required=True, nargs=-1)
 def edit(identifier, editor):
     reader = ZXr.ZXReader(ZK_PATH)
     matches = reader.search(" ".join(identifier))
-    if len(list(matches)) == 1:
-        doc = list(matches)[0].document
-        path = ZK_PATH + '/' + doc.filename
+    if len(matches) == 1:
+        doc = matches[0].document
+        filename = j.loads(doc.get_data())["filename"]
+        path = ZK_PATH + '/' + filename
         subprocess.run([editor, path])
         ZK = Zm.ZettelkastenMMD.from_folder(ZK_PATH) 
         Zwriter = ZXw.ZXWriter(ZK_PATH, ZK)
-        Zwriter.zk_to_db()
-    elif len(list(matches)) == 0: 
+        Zwriter.zk_to_db(force=True)
+    elif len(matches) == 0: 
         click.echo("No match for identifier")
     else:
         click.echo("This identifier matches too many documents.")
