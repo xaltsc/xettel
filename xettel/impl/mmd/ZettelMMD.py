@@ -14,8 +14,6 @@ class ZettelMMD(Zettel):
     def from_file(cls, parent, filename):
         z = super().from_file(parent,filename)
         zmmd = ZettelMMD(parent, z.get_uid(), filename)
-        #zmmd.set_outbound_links()
-        zmmd.set_attributes()
         return zmmd
 
 

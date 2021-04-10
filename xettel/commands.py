@@ -40,15 +40,16 @@ def cli(config, dir):
     pass
 
 @click.option('-x', '--delete', default=False, is_flag=True, help="purge database of files not present anymore",)
+@click.option('-f', '--force', default=False, is_flag=True, help="force overwriting database",)
 @cli.command()
-def updatedb(delete):
+def updatedb(delete, force=False):
     click.echo("Loading Zettelkasten from files...")
     ZK = Zm.ZettelkastenMMD.from_folder(ZK_PATH) 
     Zwriter = ZXw.ZXWriter(ZK_PATH, ZK)
     click.echo("Recording changes to the database...")
    # click.echo([x.filename for x in ZK[int("2ONQX4RR", 36)].outbound_links])
    # click.echo(ZK[int("2ONRIQW8", 36)].inbound_links)
-    Zwriter.zk_to_db(force=True)
+    Zwriter.zk_to_db(force=force)
     click.echo("Success!")
     if delete:
         Zwriter.delete_in_db()
