@@ -9,6 +9,7 @@ from datetime import datetime
 import subprocess
 import json as j
 import os
+import shutil
 
 def cfgparse(configpath):
     return toml.load(configpath)
@@ -25,6 +26,7 @@ def int36(num):
 
 ZK_PATH = None
 cfg = None
+template_path = None
 
 @click.group()
 @click.option('-c', '--config', default="/home/ax/.config/xettel.toml", help="config file")
@@ -44,7 +46,9 @@ def updatedb(delete):
     ZK = Zm.ZettelkastenMMD.from_folder(ZK_PATH) 
     Zwriter = ZXw.ZXWriter(ZK_PATH, ZK)
     click.echo("Recording changes to the database...")
-    Zwriter.zk_to_db()
+   # click.echo([x.filename for x in ZK[int("2ONQX4RR", 36)].outbound_links])
+   # click.echo(ZK[int("2ONRIQW8", 36)].inbound_links)
+    Zwriter.zk_to_db(force=True)
     click.echo("Success!")
     if delete:
         Zwriter.delete_in_db()
@@ -52,15 +56,19 @@ def updatedb(delete):
 
 @cli.command()
 @click.option('-e', '--editor', envvar='EDITOR', help="editor to write in")
+@click.option('-t', '--template', help="template for the new file")
 @click.argument('name', required=True)
-def new(name, editor):
+def new(name, editor, template=None):
+    template = cfg["Zettelkasten"]["template"] if template == None else template 
     uid = datetime.now().strftime('%y%m%d%H%M%S')
     uid = int36(int(uid))
     path = ZK_PATH + '/' + uid + '-' + name + '.mmd'
+    shutil.copyfile(template, path)
     subprocess.run([editor, path])
     ZK = Zm.ZettelkastenMMD.from_folder(ZK_PATH) 
     Zwriter = ZXw.ZXWriter(ZK_PATH, ZK)
     Zwriter.zk_to_db()
+    click.echo("New zettel {} created.".format(uid))
 
 @cli.command()
 @click.option('-e', '--editor', envvar='EDITOR', help="editor to write in")

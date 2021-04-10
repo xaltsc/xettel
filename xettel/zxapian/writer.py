@@ -16,7 +16,7 @@ class ZXWriter(ZX):
 
         self.ZK = ZK
 
-    def zk_to_db(self):
+    def zk_to_db(self, force=False):
         new_docs = 0
         updated_docs = 0
         for zettel in self.ZK.to_xapian():
@@ -30,7 +30,7 @@ class ZXWriter(ZX):
                     raise xapian.DocNotFoundError("no match for uid: {0}".format(UID))
                 olddoc = self.db.get_document(match[0].docid)
                 oldhash = [ x.term for x in olddoc.termlist() if x.term.startswith(b'H') ][0][1:]
-                if oldhash != newhash:
+                if oldhash != newhash or force:
                     self.db.replace_document(u"Q"+UID, zettel.to_xapian(self.indexer))
                     updated_docs += 1
             except xapian.DocNotFoundError:
