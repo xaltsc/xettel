@@ -64,7 +64,7 @@ def convert_links(key, value, format, meta):
             title = filename[:-4]
             filename = title + ".html"
             title="-".join(title.split("-")[1:])
-            return Link(("", ["zettel.link"], []), [Str(address)], (filename, title))
+            return Link(("", ["zettel-link"], []), [Str(address)], (filename, title))
         elif len(value)==18 and value[:2]=='[[' and value[-2:]==']]':
             address = int(value[2:-2])
             uid = address
