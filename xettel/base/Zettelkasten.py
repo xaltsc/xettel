@@ -22,6 +22,14 @@ class Zettelkasten:
                         )
         ZK.initialise_rels()
         return ZK
+    
+    def update_zettel_from_file(self, file):
+        z = Z.Zettel.from_file(self, file)
+        try:
+            self[z.get_uid()] = z
+        except IndexError:
+            self.zettels.append(z)
+        self.initialise_rels()
 
     def initialise_rels(self):
         for z in self:
@@ -48,9 +56,21 @@ class Zettelkasten:
                 return z
         raise IndexError("No Zettel with such UID: {0}".format(y))
 
+    def __setitem__(self, uid, value):
+        found = None
+        for z in self:
+            if z.get_uid() == uid:
+                found = z
+
+        if found is None:
+            raise IndexError("No Zettel with such UID: {0}".format(uid))
+        else:
+            index = self.zettels.index(found)
+            self.zettels[index] = value
+
     def to_xapian(self):
         return self.__iter__()
-        
+
     # Health checks {{{
 
     def build_graph(self):
